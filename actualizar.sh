@@ -10,7 +10,7 @@ else
 
 #sed -i '201c <li><a href="##">V<?php echo $actualizacion;?></a></li>' /var/www/html/panel_configuracion.php
 
-sudo cp /var/www/html/Actualizar_DVSWITCH_LITE/panel_configuracion.php /var/www/html
+#sudo cp /var/www/html/Actualizar_DVSWITCH_LITE/panel_configuracion.php /var/www/html
 
 
 #dmrplus_21465.sh
