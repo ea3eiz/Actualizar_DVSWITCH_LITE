@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-ultima=6.0.3
+ultima=6.0.2
 actualizacion=$(awk "NR==2" /var/www/html/comprueba_actualizacion.php)
 if [ $actualizacion = $ultima ];
 then
@@ -15,7 +15,7 @@ else
 
 #dmrplus_21465.sh
 
-sudo sed -i "58 RAN=1" /opt/MMDVM_Bridge/MMDVM_BRIDGE_FCS.ini
+sudo sed -i "58c RAN=1" /opt/MMDVM_Bridge/MMDVM_BRIDGE_FCS.ini
 
 sudo sed -i "2c $ultima" /var/www/html/comprueba_actualizacion.php
 
