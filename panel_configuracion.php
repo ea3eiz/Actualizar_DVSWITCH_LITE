@@ -1,6 +1,11 @@
 <?php 
 session_start();
 
+$OPTION = exec("sed -n '78p' /opt/MMDVM_Bridge/MMDVM_Bridge.ini");
+$OPTION1 = substr("$OPTION", 17, 4);
+
+$IPCS22 = exec("sed -n '70p' /opt/MMDVM_Bridge/MMDVM_Bridge.ini");
+
 $ambe_activo = exec("sed -n '23p'  /opt/Analog_Bridge/Analog_Bridge.ini");
 $ambe_activo = substr("$ambe_activo", 18, 4);
 
@@ -16,14 +21,73 @@ $dmr = substr("$dmr", 0, 1);
 if ($dmr=="O")
 {
     $dmr="DMR+";
+
+//=======================================
+if ($IPCS22=="Address=217.61.2.11"){
+    $IPCS22="Catalunya";
+}
+
+if ($IPCS22=="Address=212.237.3.141"){
+    $IPCS22="EA-Hotspot";
+}
+
+if ($IPCS22=="Address=94.177.189.17"){
+    $IPCS22="EA-RPTR";
+}
+
+if ($IPCS22=="Address=217.61.97.204"){
+    $IPCS22="EA1Master";
+}
+if ($IPCS22=="Address=185.47.129.230"){
+    $IPCS22="EA2Master";
+}
+if ($IPCS22=="Address=212.237.4.86"){
+    $IPCS22="EA3-RPTR";
+}
+if ($IPCS22=="Address=89.36.222.146"){
+    $IPCS22="EA3Master";
+}
+if ($IPCS22=="Address=80.211.226.37"){
+    $IPCS22="EA4Master";
+}
+if ($IPCS22=="Address=217.61.98.58"){
+    $IPCS22="EA5Master";
+}
+if ($IPCS22=="Address=212.237.50.28"){
+    $IPCS22="EA7Master";
+}
+if ($OPTION1=="4000"){
+    $OPTION = substr("$OPTION", 42, 5);
+}
+//==========================================
+
+
+else {
+    $OPTION = substr("$OPTION", 17, 4);
+    #$IPCS22="";
+}
+
 }
 else {
     $dmr="BRANDMEISTER";
+    $OPTION="";
+    $IPCS22="";
 }
+
 
 $sistema = exec("sed -n '1p'  /opt/Analog_Bridge/Analog_Bridge.ini");
 $sistema = substr("$sistema", 2, 3);
 
+
+
+if ($sistema=="FCS")
+{
+    $sistema="FCS";
+    $OPTION="";
+    $sala_fcs = exec("sed -n '42p' /home/pi/YSFClients/YSFGateway/YSFGateway.ini");
+    $sala_fcs = substr("$sala_fcs", 11, 5);  
+    $IPCS22=$sala_fcs;
+}
 if ($sistema=="esp")
 {
     $sistema="ESPECIAL";
@@ -36,14 +100,24 @@ if ($sistema=="dmr")
 elseif ($sistema=="dst")
 {
     $sistema="D-STAR";
+    $OPTION="";
+    $reflector_dstar = exec("sed -n '18p' /etc/ircddbgateway");
+    $reflector_dstar = substr("$reflector_dstar", 11, 8);
+    $IPCS22=$reflector_dstar;
 }
 elseif ($sistema=="nxd")
 {
     $sistema="NXDN";
+    $OPTION="";
+    $sala_nxdn = exec("sed -n '10p' /opt/NXDNClients/NXDNGateway/private/NXDNHosts.txt");
+    $sala_nxdn = substr("$sala_nxdn", 0, 5);
+    $IPCS22=$sala_nxdn;
 }
 elseif ($sistema=="ysf")
 {
     $sistema="YSF";
+    $OPTION="";
+    $IPCS22="";
 }
 
 $actualizacion = exec("sed -n 2p /var/www/html/comprueba_actualizacion.php");
@@ -84,16 +158,17 @@ $password_especial = exec("sed -n '74p' /opt/MMDVM_Bridge/especial.ini");
 $password_especial = substr("$password_especial", 9, 15);
 
 $sala_nxdn = exec("sed -n '10p' /opt/NXDNClients/NXDNGateway/private/NXDNHosts.txt");
+$sala_nxdn = substr("$sala_nxdn", 0, 5);
 
 $selfcare = exec("sed -n '74p' /opt/MMDVM_Bridge/brandmeister_esp.ini");
 $selfcare = substr("$selfcare", 9, 20);
 
-$sala_fcs = exec("sed -n '39p' /home/pi/YSFClients/YSFGateway/YSFGateway.ini");
-$sala_fcs = substr("$sala_fcs", 8, 8);
+$sala_fcs = exec("sed -n '42p' /home/pi/YSFClients/YSFGateway/YSFGateway.ini");
+$sala_fcs = substr("$sala_fcs", 11, 5);
 
 //COMPROBAMOS SI EL DVSWITCH ESTÁ ACTIVADO EN EL ESCRITORIO DE LA IMAGEN V10
-$dvswitch = "DVSWITCH=ON";
-if ($dvswitch=="DVSWITCH=ON"){
+//$dvswitch = exec("sed -n '18p' /home/pi/status.ini");
+//if ($dvswitch=="DVSWITCH=ON"){
 ?>
 <!-- ============================================== -->
 
@@ -111,8 +186,8 @@ if ($dvswitch=="DVSWITCH=ON"){
 <!-- ====================================================== -->
 <!-- <meta http-equiv="refresh" content="5" /> -->
 
-    <link rel="shortcut icon" href="img/Logo_Ader.png">
-    <title>Configuracion</title>
+    <link rel="shortcut icon" href="img/BOLA_MUNDO_ADER.png">
+    <title>DV ADER LITE</title>
     <!-- CSS Bootstrap-->
     <link href="custom/bootstrap/css/bootstrap.css" rel="stylesheet">
     
@@ -155,7 +230,7 @@ header {
     border-radius: 4px 4px 4px 4px;
     } 
 .ambe{
-    height: 440px;
+    height: 450px;
     color:#FFFFFF;
     font-size: 26px;
     padding-top: 5px;
@@ -192,12 +267,74 @@ header {
 .version{
     height: 50px;
     color:#FFFFFF;
-    font-size: 26px;
-    padding-top: 5px;
+    font-size: 18px;
+    padding-top: 8px;
     text-align: center;
     background:#000000;
     border-radius: 4px 4px 4px 4px;
-    }        
+    }    
+.callsign{
+    height: 50px;
+    color:#FFFFFF;
+    font-size: 22px;
+    padding-top: 5px;
+    text-align: center;
+    background:#80007F;
+    border-radius: 4px 4px 4px 4px;
+    }   
+    .ipcs2{
+    color:#000000;
+    font-size: 25px;
+    padding-top: 11px;
+    } 
+@media (max-width: 360px) {
+.ipcs2{
+    color:#000000;
+    font-size: 18px;
+    padding-top: 11px;
+    }
+    .sistema{
+    height: 50px;
+    color:#FFFFFF;
+    font-size: 18px;
+    padding-top: 5px;
+    text-align: center;
+    background:#108040;
+    border-radius: 4px 4px 4px 4px;
+    } 
+}
+@media (min-width: 375px) {
+.ipcs2{
+    color:#000000;
+    font-size: 18px;
+    padding-top: 11px;
+    }
+    .sistema{
+    height: 50px;
+    color:#FFFFFF;
+    font-size: 18px;
+    padding-top: 5px;
+    text-align: center;
+    background:#108040;
+    border-radius: 4px 4px 4px 4px;
+    } 
+}
+@media (min-width: 760px) {
+.ipcs2{
+    color:#000000;
+    font-size: 25px;
+    padding-top: 11px;
+    }
+    .sistema{
+    height: 50px;
+    color:#FFFFFF;
+    font-size: 25px;
+    padding-top: 5px;
+    text-align: center;
+    background:#108040;
+    border-radius: 4px 4px 4px 4px;
+    } 
+}  
 .color_naranja{
     color:#21FF06;
     }  
@@ -226,7 +363,7 @@ header {
     border-radius: 8px 8px 8px 8px;
     }
 .config_especial{
-    height: 440px;
+    height: 450px;
     background:#091398;
     border-radius: 8px 8px 8px 8px;
     }
@@ -284,7 +421,7 @@ h6{
 <li class="dropdown">
     <a href="##" class="dropdown-toggle" data-toggle="dropdown">Cambiar de sistema<b class="caret"></b></a>
     <ul class="dropdown-menu">
-    <li><a href="dmrplus.php">DMR+</a></li>
+    <li><a href="sistema_plus.php">DMR+</a></li>
     <li class="divider"></li>
     <li><a href="brandmeister.php">BRANDMEISTER</a></li>
     <li class="divider"></li>
@@ -299,11 +436,20 @@ h6{
     <li><a href="especial.php">CONFIGURACIÓN ESPECIAL</a></li>
     </ul>
 </li>
-        <li><a href="borra_logs.php">BORRAR LOGS</a></li>
-        <li><a href="reboot.php">reboot</a></li>
-        <li><a href="actualizar.php">Actualizar imagen</a></li>
-        <li><a>V-<?php echo $actualizacion;?></a></li>
-              </ul>
+
+
+
+<li class="dropdown">
+    <a href="##" class="dropdown-toggle" data-toggle="dropdown">CONFIGURAR RED<b class="caret"></b></a>
+    <ul class="dropdown-menu">
+    <li><a href="configuracion_red.php">ETHERNET</a></li>
+    <li class="divider"></li>
+    <li><a href="configuracion_wifi.php">WIFI</a></li>
+    </ul>
+</li>
+    <li><a href="borra_logs.php">BORRAR LOGS</a></li>
+    <li><a href="actualizar.php">Actualizar imagen</a></li>
+</ul>
             </div>
         </div>
     </nav>
@@ -313,14 +459,19 @@ h6{
 <!--============== CAJA LOGIN ====================================-->
 
  <div class="row">
-    <div class="col-md-8 sistema">
-        <span>Sistema actual: <?php echo $sistema;?></span>
-    </div>
-       
-
+          
     <div class="col-md-4 version">
-        <span>Dvswitch Mobile Lite</span>
+        <span>Dvswitch Mobile Lite (7.01) V-<?php echo $actualizacion;?></span>
     </div>
+
+    <div class="col-md-6 sistema">
+        <span>Sistema actual: <?php echo $sistema;?> </span><span class="ipcs2"><?php echo $IPCS22;?> <?php echo $OPTION;?></span>
+    </div>
+
+    <div class="col-md-2 callsign">
+        <span><?php echo $indicativo;?></span>
+    </div>
+    
 </div>
 
  
@@ -335,7 +486,7 @@ h6{
      <h5>CONFIGURACIÓN GENERAL</h5>
     
 <form method="post" action="cambia_selfcare.php"/>      
-        <input name="selfcare" class="form-control fuente_boton1" placeholder="Introduce pass Selfcare Brandmeister + enter">
+        <input name="selfcare" class="form-control fuente_boton1" placeholder="Introduce pass Selfcare Brandmeister + Enter">
             <div class="fondo_datos">Password: 
                 <span class="color_naranja"><?php echo $selfcare;?></span>
             </div>      
@@ -344,14 +495,14 @@ h6{
 
 <form method="post" action="cambia_configuracion_indicativo.php"/>
 
-        <input name="indicativo" class="form-control fuente_boton1" placeholder="Introduce indicativo + enter">
+        <input name="indicativo" class="form-control fuente_boton1" placeholder="Introduce indicativo + Enter">
             <div class="fondo_datos">Indicativo: 
                 <span class="color_naranja"><?php echo $indicativo;?></span>
             </div>       
 </form>
 
 <form method="post" action="cambia_configuracion_id.php"/>                
-        <input name="id" class="fuente_boton1 form-control" placeholder="Introduce Id 7 dígitos + enter">                  
+        <input name="id" class="fuente_boton1 form-control" placeholder="Introduce Id 7 dígitos + Enter">                  
             <div class="fondo_datos">In Simple: 
                 <span class="color_naranja"><?php echo $id;?></span>
             </div>
@@ -359,14 +510,14 @@ h6{
 
 <form method="post" action="cambia_configuracion_id2.php"/>
    
-        <input name="id2" class="fuente_boton1 form-control" placeholder="Introduce Id 9 dígitos + enter">
+        <input name="id2" class="fuente_boton1 form-control" placeholder="Introduce Id 9 dígitos + Enter">
             <div class="fondo_datos">Id 9 dígitos:
                 <span class="color_naranja"><?php echo $id2;?></span>
             </div> 
 </form>
 
 <form method="post" action="cambia_reflector_dstar.php"/>
-        <input name="reflector_dstar" class="fuente_boton1 form-control" placeholder="Introduce reflector ej.XRF266 Y + enter"> 
+        <input name="reflector_dstar" class="fuente_boton1 form-control" placeholder="Introduce reflector ej.XRF266 Y + Enter"> 
             <div class="fondo_datos">Reflector D-STAR:
                 <span class="color_naranja"><?php echo $reflector_dstar;?></span>
             </div>
@@ -453,7 +604,7 @@ h6{
                 <span class="color_naranja"><?php echo $puerto_ambe;?></span>
             </div>         
 </form>
-
+<br>
 <form method="post" action="cambia_activa_ambe.php"/>
     <button class="btn btn-success btn-sm btn-block" type="submit">ACTIVAR AMBE SERVER</button>
 </form>
@@ -499,22 +650,22 @@ h6{
 
 <form method="post" action="cambia_sala_nxdn.php"/>
 
-        <input name="sala_nxdn" class="fuente_boton3 form-control" placeholder="Sala NXDN ej.21465 80.211.106.186 41400 + Enter">    
+        <input name="sala_nxdn" class="fuente_boton3 form-control" placeholder="Sala NXDN ej.21465 80.211.106.186 41400">    
             <div class="fondo_datos">Sala NXDX: 
                 <span class="color_naranja1"><?php echo $sala_nxdn;?></span>
             </div> 
 
 </form>
 
-<!-- <form method="post" action="cambia_sala_FCS.php"/>
+<form method="post" action="cambia_sala_FCS.php"/>
 
         <input name="sala_fcs" class="fuente_boton3 form-control" placeholder="Sala FCS ej.FCS00465 + Enter">    
             <div class="fondo_datos">Sala FCS: 
                 <span class="color_naranja"><?php echo $sala_fcs;?></span>
             </div> 
 
-</form> -->
-<br><br><br>
+</form>
+<br><br>
 <form method="post" action="restart_services.php"/>
     <button class="btn btn-warning btn-sm btn-block" type="submit">APLICAR LOS CAMBIOS E INICIAR SISTEMAS</button>
 </form>
@@ -551,12 +702,7 @@ h6{
     </header>
     
 
-    <?php
-    //EL DVSWITCH NO ESTÁ ACTIVADO Y NO ABRE LA PAGINA DEL DVSWITCH
-}else {
-header('Location: dvswitch_desactivado.php');    
-}
-?>
+
     <!-- jQuery -->
     <script src="custom/jquery/jquery.min.js"></script>
     <script src="custom/bootstrap/js/bootstrap.min.js"></script>
