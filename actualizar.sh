@@ -11,7 +11,7 @@ else
 #sed -i '201c <li><a href="##">V<?php echo $actualizacion;?></a></li>' /var/www/html/panel_configuracion.php
 
 #========================================================================================
-# Cambios 06-04-2020
+# Cambios 06-04-2020 ultima=6.0.4
 sudo cp /var/www/html/Actualizar_DVSWITCH_LITE/panel_configuracion.php /var/www/html
 sudo cp /var/www/html/Actualizar_DVSWITCH_LITE/sistema_plus.php /var/www/html
 sudo cp /var/www/html/Actualizar_DVSWITCH_LITE/cambia_options_dmrplus.php /var/www/html
