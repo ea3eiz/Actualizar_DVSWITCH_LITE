@@ -130,7 +130,7 @@ $id2 = substr("$id2", 3, 9);
 $indicativo = exec("sed -n '2p' /opt/MMDVM_Bridge/MMDVM_Bridge.ini");
 $indicativo = substr("$indicativo", 9, 7);
 
-$port = exec("sed -n '55p'  /opt/Analog_Bridge/Analog_Bridge.ini");
+$port = exec("sed -n '57p'  /opt/Analog_Bridge/Analog_Bridge.ini");
 $port = substr("$port", 9, 5);
 
 $location = exec("sed -n '14p' /opt/MMDVM_Bridge/MMDVM_Bridge.ini");
