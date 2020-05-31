@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-ultima=6.0.4
+ultima=6.0.5
 actualizacion=$(awk "NR==2" /var/www/html/comprueba_actualizacion.php)
 if [ $actualizacion = $ultima ];
 then
